@@ -27,22 +27,24 @@ public class SendEmailService {
 
 //	private final String GMAIL_HOST = "smtp.gmail.com";
 	private final String ZOHO_HOST = "smtp.zoho.com";
-	private final String SSL_PORT = "465";
-	private final String TLS_PORT = "897"; //change to 456 for SSL
-	private final String NO_REPLY_EMAIL = "no-reply@ssms.co.za";
-	private final String USERNAME = "no-reply@ssms.co.za";
-	private final String PASSWORD = "mdjYWfvbcEAAW7yf";
+	private final String SSL_PORT = "465"; //change to 897 for TLS
+	private final String NO_REPLY_EMAIL = "";
+	private final String USERNAME = "";
+	private final String PASSWORD = "";
 	
+	/*
+	 * You would not normally execute this code in the same thread that is calling it, but for ease of demonstration
+	 */
 	public void sendEmail() {
 		
 		final String ccEmail = "";
-		final String recipientEmail = "zeus3324@gmail.com";
+		final String recipientEmail = "";
 		final String title = "Demo";
 		final String message = "Message Sent via JavaMail";
 
 		Properties props = System.getProperties();
 		props.setProperty("mail.smtps.host", ZOHO_HOST);
-		props.setProperty("mail.smtp.port", TLS_PORT);
+		props.setProperty("mail.smtp.port",SSL_PORT);
 		props.setProperty("mail.smtp.startssl.enable", "true");
 		props.setProperty("mail.smtps.auth", "true");
 
