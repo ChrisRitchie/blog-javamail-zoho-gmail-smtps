@@ -28,10 +28,7 @@ public class SendEmailServlet extends HttpServlet {
 
 		response.setContentType("text/html;charset=UTF-8");
 
-		sendEmailService.sendEmail();
-		
-		// all OK
-		String message = "Email sent";
+		String message = sendEmailService.sendEmail();
 		
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();

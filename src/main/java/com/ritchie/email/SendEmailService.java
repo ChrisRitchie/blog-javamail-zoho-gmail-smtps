@@ -14,8 +14,6 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import com.sun.mail.smtp.SMTPTransport;
-
 
 /**
  * http://stackoverflow.com/questions/1990454/using-javamail-to-connect-to-gmail-smtp-server-ignores-specified-port-and-tries
@@ -28,22 +26,24 @@ public class SendEmailService {
 	private final String GMAIL_HOST = "smtp.gmail.com";
 	private final String ZOHO_HOST = "smtp.zoho.com";
 	private final String SSL_PORT = "465"; //change to 897 for TLS
-	private final String USERNAME = "username@zoho.com";
-	private final String PASSWORD = "changeme";
+	
+	private final String SENDER_EMAIL = "username@zoho.com";
+	private final String SENDER_USERNAME = "username@zoho.com";
+	private final String SENDER_PASSWORD = "no-reply-password";
 	
 	/*
-	 * You would not normally execute this code in the same thread that is calling it, but for ease of demonstration
+	 * You should normally execute this code in the same thread that is calling it, but for ease of demonstration
 	 */
 	public String sendEmail() {
 		
 	    //email content
 		final String recipientEmail = "recipient@gmail.com";
 		final String title = "Demo";
-		final String message = "Message Sent via JavaMail + gmail";
+		final String message = "Message Sent via JavaMail";
 
 		//protocol properties
 		Properties props = System.getProperties();
-		props.setProperty("mail.smtps.host", ZOHO_HOST);
+		props.setProperty("mail.smtps.host", ZOHO_HOST); //change to GMAIL_HOST for gmail
 		props.setProperty("mail.smtp.port",SSL_PORT);
 		props.setProperty("mail.smtp.startssl.enable", "true");
 		props.setProperty("mail.smtps.auth", "true");
@@ -59,7 +59,7 @@ public class SendEmailService {
 		    final MimeMessage msg = new MimeMessage(session);
 		    
 		    // set recipients
-			msg.setFrom(new InternetAddress("no-reply@yourdomain.com"));
+			msg.setFrom(new InternetAddress(SENDER_EMAIL));
 			msg.setRecipients(Message.RecipientType.TO,	InternetAddress.parse(recipientEmail, false));
 			msg.setSubject(title);
 			msg.setText(message, "utf-8", "html");
@@ -69,7 +69,7 @@ public class SendEmailService {
 			Transport transport = session.getTransport("smtps");
 
 			//send the mail
-			transport.connect(ZOHO_HOST, USERNAME, PASSWORD);
+			transport.connect(ZOHO_HOST, SENDER_USERNAME, SENDER_PASSWORD);
 			transport.sendMessage(msg, msg.getAllRecipients());
 			transport.close();
 
