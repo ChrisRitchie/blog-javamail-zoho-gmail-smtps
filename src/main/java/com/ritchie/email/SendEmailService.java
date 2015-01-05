@@ -25,55 +25,50 @@ public class SendEmailService {
 	
 	private Logger logger = Logger.getLogger(SendEmailService.class.getName());
 
-//	private final String GMAIL_HOST = "smtp.gmail.com";
+	private final String GMAIL_HOST = "smtp.gmail.com";
 	private final String ZOHO_HOST = "smtp.zoho.com";
 	private final String SSL_PORT = "465"; //change to 897 for TLS
-	private final String NO_REPLY_EMAIL = "";
-	private final String USERNAME = "";
-	private final String PASSWORD = "";
+	private final String USERNAME = "username@zoho.com";
+	private final String PASSWORD = "changeme";
 	
 	/*
 	 * You would not normally execute this code in the same thread that is calling it, but for ease of demonstration
 	 */
-	public void sendEmail() {
+	public String sendEmail() {
 		
-		final String ccEmail = "";
-		final String recipientEmail = "";
+	    //email content
+		final String recipientEmail = "recipient@gmail.com";
 		final String title = "Demo";
-		final String message = "Message Sent via JavaMail";
+		final String message = "Message Sent via JavaMail + gmail";
 
+		//protocol properties
 		Properties props = System.getProperties();
 		props.setProperty("mail.smtps.host", ZOHO_HOST);
 		props.setProperty("mail.smtp.port",SSL_PORT);
 		props.setProperty("mail.smtp.startssl.enable", "true");
 		props.setProperty("mail.smtps.auth", "true");
-
 		//close connection upon quit being sent
 		props.put("mail.smtps.quitwait", "false");
 
 		Session session = Session.getInstance(props, null);
 
-		// -- Create a new message --
-		final MimeMessage msg = new MimeMessage(session);
-
-		// -- Set the FROM and TO fields --
+		String returnMsg = "Invite successfully sent to " + recipientEmail;
+		
 		try {
-			msg.setFrom(new InternetAddress(NO_REPLY_EMAIL));
-
-			msg.setRecipients(Message.RecipientType.TO,
-					InternetAddress.parse(recipientEmail, false));
-
-			if (ccEmail != null && ccEmail.length() > 0) {
-				msg.setRecipients(Message.RecipientType.CC,
-						InternetAddress.parse(ccEmail, false));
-			}
-
+		    //create the message
+		    final MimeMessage msg = new MimeMessage(session);
+		    
+		    // set recipients
+			msg.setFrom(new InternetAddress("no-reply@yourdomain.com"));
+			msg.setRecipients(Message.RecipientType.TO,	InternetAddress.parse(recipientEmail, false));
 			msg.setSubject(title);
 			msg.setText(message, "utf-8", "html");
 			msg.setSentDate(new Date());
 
-			Transport transport = session.getTransport("smtps"); //this means you do not need socketFactory properties
+			 //this means you do not need socketFactory properties
+			Transport transport = session.getTransport("smtps");
 
+			//send the mail
 			transport.connect(ZOHO_HOST, USERNAME, PASSWORD);
 			transport.sendMessage(msg, msg.getAllRecipients());
 			transport.close();
@@ -81,11 +76,14 @@ public class SendEmailService {
 			logger.info("Invite successfully sent to " + recipientEmail);
 
 		} catch (AddressException e) {
-			logger.log(Level.SEVERE, "Invalid recipient address", e);
+		    returnMsg = "Invalid recipient address";
+			logger.log(Level.SEVERE, returnMsg, e);
 		} catch (MessagingException e) {
-			logger.log(Level.SEVERE, "Failed to send email", e);
+		    returnMsg = "Failed to send email";
+			logger.log(Level.SEVERE, returnMsg, e);
+			return "Failed to send email";
 		}
-
+		return returnMsg;
 	}
 
 }
